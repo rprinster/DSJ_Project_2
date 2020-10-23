@@ -20,14 +20,20 @@ public class ProofOfConcept {
 		String postfix = infixToPostfix(infixArr);	//FIXME: I think we want to change infixToPostfix so that it directly gives us the array	
 		String postfixArr[] = postfix.split(" ");	//FIXME: Delete this line after above line is fixed
 		
-		//Step 3: Evaluate Postfix Array
-		int solution = postfixEval(postfixArr); 
 		
-		//Step 4: Display Solution
-		System.out.println("Infix:    " + infix);
-		System.out.println("Postfix:  " + postfix);
-		System.out.println("Solution: " + solution );
-		System.out.println();
+		try { //Step 3: Evaluate Postfix Array
+			int solution = postfixEval(postfixArr);
+			
+			//Step 4: Display Solution
+			System.out.println("Infix:    " + infix);
+			System.out.println("Postfix:  " + postfix);
+			System.out.println("Solution: " + solution );
+			System.out.println();
+		} catch (ArithmeticException e) { // Step 4a. safely catch any divide by zero errors
+			System.out.println("Cannot divide by zero.\n");
+		} catch (NumberFormatException f) {
+			System.out.println("FIXME: Failed to parse expression.\n" + f); // FIXME: throws when no space is present to delimit a string.
+		}
 	}
 	
 
@@ -44,7 +50,7 @@ public class ProofOfConcept {
 			if (Character.isDigit(s.charAt(0))) { postfix.append(s).append(' '); }
 			else if (s.equals("(")) { S.push(s); }
 			else if (s.equals(")")){
-				while (!S.peek().equals("(")) { postfix.append(S.pop()).append(' '); }
+				while (!S.peek().equals("(")) { postfix.append(S.pop()).append(' '); } // FIXME: throws NullPointerException when a space is missing before an '(' in a string
 				S.pop();
 			}else {	//if s is an operator 
 				while (!S.isEmpty() && !S.peek().equals("(") && precedence(s, S.peek())) {
@@ -165,7 +171,10 @@ public class ProofOfConcept {
 		infix = "( 2 > 3 ) - 2";
 		infixSolver(infix);
 		
-		infix = "5 ^ 2 % 7 && ( 4 - 4 )";
+		infix = "5 ^ 2 % 7 * ( 4 - 4 )";
+		infixSolver(infix);
+		
+		infix = "3/(6*5-30)"; // Division by zero test case
 		infixSolver(infix);
 	}
 }
