@@ -151,13 +151,13 @@ public class ProofOfConcept {
 		int precedenceLevel=0;
 		
 		//assigns correct precedence for the operator being checked
-		if (operator == "^") {precedenceLevel = 7;}
-		else if (operator == "*" || operator == "/" || operator == "%") {precedenceLevel = 6;}
-		else if (operator == "+" || operator == "-") {precedenceLevel = 5;}
-		else if (operator == ">" || operator == ">=" || operator == "<" || operator == "<=") {precedenceLevel = 4;}
-		else if (operator == "==" || operator == "!=") {precedenceLevel = 3;}
-		else if (operator == "&&") {precedenceLevel = 2;}
-		else if (operator == "||") {precedenceLevel = 1;}
+		if (operator.equals("^")) {precedenceLevel = 7;}
+		else if (operator.equals("*") || operator.equals("/") || operator.equals("%")) {precedenceLevel = 6;}
+		else if (operator.equals("+") || operator.equals("-")) {precedenceLevel = 5;}
+		else if (operator.equals(">") || operator.equals(">=") || operator.equals("<") || operator.equals("<=")) {precedenceLevel = 4;}
+		else if (operator.equals("==") || operator.equals("!=")) {precedenceLevel = 3;}
+		else if (operator.equals("&&")) {precedenceLevel = 2;}
+		else if (operator.equals("||")) {precedenceLevel = 1;}
 
 		return precedenceLevel;
 	}
@@ -174,7 +174,14 @@ public class ProofOfConcept {
 		infix = "5 ^ 2 % 7 * ( 4 - 4 )";
 		infixSolver(infix);
 		
-		infix = "3/(6*5-30)"; // Division by zero test case
+		infix = "3 / ( 6 * 5 - 30 )"; // Division by zero test case
 		infixSolver(infix);
+		
+		infix = "1 + 2 * 3";
+		infixSolver(infix);
+		
+		infix = "23 >= 22 + 1";
+		infixSolver(infix);
+		
 	}
 }
