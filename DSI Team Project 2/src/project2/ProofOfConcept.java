@@ -92,7 +92,6 @@ public class ProofOfConcept {
 	public static int postfixEval(String[] postfix) throws Exception {
 		Stack<Integer> S = new Stack<Integer>();
 		for (String s : postfix) {
-			
 			if (Character.isDigit(s.charAt(0))) { S.push(Integer.parseInt(s)); }
 			else {
 				int right = S.pop(), left = S.pop();
