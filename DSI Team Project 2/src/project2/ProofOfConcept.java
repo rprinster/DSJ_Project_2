@@ -10,9 +10,7 @@ public class ProofOfConcept {
      * Ensures the infix question is in correct readable form
      * @param inputFile: FileInputStream type. file should contain
      */
-    public static String readExpression(FileInputStream inputFile) {
-        Scanner scnr = new Scanner(inputFile);
-        String expression = scnr.nextLine();
+    public static String readExpression(String expression) {
         StringBuilder trueInfix = new StringBuilder();
         expression = expression.replaceAll("\\s", "");
         for (int i = 0; i < expression.length(); i++) {
@@ -23,9 +21,6 @@ public class ProofOfConcept {
                     (expression.charAt(i) == '<' && expression.charAt(i + 1) == '=')) { continue; }
             trueInfix.append(" ");
         }
-        
-        // Close the scanner
-        scnr.close();
         return trueInfix.toString();
     }
 	
@@ -190,25 +185,13 @@ public class ProofOfConcept {
 	
 	//Main Method
 	public static void main(String[] args) throws Exception {
-		String infix = "( 3 + 4 ) || 1";
-		infixSolver(infix);
 		
-		infix = "( 2 > 3 ) - 2";
-		infixSolver(infix);
 		
-		infix = "5 ^ 2 % 7 * ( 4 - 4 )";
-		infixSolver(infix);
+		Scanner scnr = new Scanner(new FileInputStream("input.txt"));
 		
-		infix = "3 / ( 6 * 5 - 30 )"; // Division by zero test case
-		infixSolver(infix);
-		
-		infix = "1 + 2 * 3";
-		infixSolver(infix);
-		
-		infix = "23 >= 22 + 1";
-		infixSolver(infix);
-		
-		infixSolver(readExpression(new FileInputStream("input.txt")));
-		
+		while (scnr.hasNext()) {
+			infixSolver(readExpression(scnr.nextLine()));
+		}
+		scnr.close();
 	}
 }
