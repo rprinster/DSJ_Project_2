@@ -19,6 +19,8 @@ public class ProofOfConcept {
             if (Character.isDigit(expression.charAt(i)) && Character.isDigit(expression.charAt(i + 1))) { continue; }
             if ((expression.charAt(i) == '>' && expression.charAt(i + 1) == '=') ||
                     (expression.charAt(i) == '<' && expression.charAt(i + 1) == '=')) { continue; }
+            if (expression.charAt(i) == '|' && expression.charAt(i + 1) == '|') { continue; }
+            if (expression.charAt(i) == '&' && expression.charAt(i + 1) == '&') { continue; }
             trueInfix.append(" ");
         }
         return trueInfix.toString();
