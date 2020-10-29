@@ -1,8 +1,33 @@
 package project2;
 
-import java.util.LinkedList;
+import java.io.FileInputStream;
+import java.util.Scanner;
+import java.util.Stack;
 
 public class ProofOfConcept {
+	
+	/**
+     * Ensures the infix question is in correct readable form
+     * @param inputFile: FileInputStream type. file should contain
+     */
+    public static String readExpression(FileInputStream inputFile) {
+        Scanner scnr = new Scanner(inputFile);
+        String expression = scnr.nextLine();
+        StringBuilder trueInfix = new StringBuilder();
+        expression = expression.replaceAll("\\s", "");
+        for (int i = 0; i < expression.length(); i++) {
+            trueInfix.append(expression.charAt(i));
+            if (i == expression.length() - 1) { break;}
+            if (Character.isDigit(expression.charAt(i)) && Character.isDigit(expression.charAt(i + 1))) { continue; }
+            if ((expression.charAt(i) == '>' && expression.charAt(i + 1) == '=') ||
+                    (expression.charAt(i) == '<' && expression.charAt(i + 1) == '=')) { continue; }
+            trueInfix.append(" ");
+        }
+        
+        // Close the scanner
+        scnr.close();
+        return trueInfix.toString();
+    }
 	
 	
 	/** Solves an infix expression given as unprocessed string
@@ -43,7 +68,7 @@ public class ProofOfConcept {
 	 * @throws Exception: stack's peek() and pop() methods
 	 */
 	public static String infixToPostfix(String[] infix) throws Exception {
-		LinkedList<String> S = new LinkedList<String>();
+		Stack<String> S = new Stack<String>();
 		StringBuilder postfix = new StringBuilder();		
 		
 		for (String s : infix) {
@@ -70,7 +95,7 @@ public class ProofOfConcept {
 	 * @throws Exception: stack's pop() method
 	 */
 	public static int postfixEval(String[] postfix) throws Exception {
-		LinkedList<Integer> S = new LinkedList<Integer>();
+		Stack<Integer> S = new Stack<Integer>();
 		for (String s : postfix) {
 			
 			if (Character.isDigit(s.charAt(0))) { S.push(Integer.parseInt(s)); }
@@ -182,6 +207,8 @@ public class ProofOfConcept {
 		
 		infix = "23 >= 22 + 1";
 		infixSolver(infix);
+		
+		infixSolver(readExpression(new FileInputStream("input.txt")));
 		
 	}
 }
