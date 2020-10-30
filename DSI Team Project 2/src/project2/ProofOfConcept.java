@@ -4,41 +4,55 @@ import java.io.FileInputStream;
 import java.util.Scanner;
 import java.util.Stack;
 
+/**
+ * <h1>Project 2 - Infix Parser</h1>
+ * This program parses an infix formated mathematical expression and solves it
+ * using postfix conversion.
+ * 
+ * @author	Connor Clawson, James Smootherman, Ryan Prinster
+ * @version	1.0
+ * @since	10-29-2020
+ */
 public class ProofOfConcept {
 	
 	/**
-     * Ensures the infix question is in correct readable form
-     * @param inputFile: FileInputStream type. file should contain
-     */
+	 * Ensures the infix question is in correct readable form.
+	 * @param expression: infix expression string
+	 * @return Formated infix string
+	 */
     public static String readExpression(String expression) {
         StringBuilder trueInfix = new StringBuilder();
         expression = expression.replaceAll("\\s", "");
         for (int i = 0; i < expression.length(); i++) {
+        	
             trueInfix.append(expression.charAt(i));
-            if (i == expression.length() - 1) { break;}
-            if (Character.isDigit(expression.charAt(i)) && Character.isDigit(expression.charAt(i + 1))) { continue; }
+            if (i == expression.length() - 1) { break; } // end of string
+            if (Character.isDigit(expression.charAt(i)) && Character.isDigit(expression.charAt(i + 1))) { continue; } // Integer or single character operator
+            
+            // The following manage two-character comparison operators
             if ((expression.charAt(i) == '>' && expression.charAt(i + 1) == '=') ||
-                    (expression.charAt(i) == '<' && expression.charAt(i + 1) == '=')) { continue; }
-            if (expression.charAt(i) == '|' && expression.charAt(i + 1) == '|') { continue; }
-            if (expression.charAt(i) == '&' && expression.charAt(i + 1) == '&') { continue; }
+                    (expression.charAt(i) == '<' && expression.charAt(i + 1) == '=')) { continue; } // Greater/lesser than or equal to
+            if (expression.charAt(i) == '|' && expression.charAt(i + 1) == '|') { continue; } // or
+            if (expression.charAt(i) == '&' && expression.charAt(i + 1) == '&') { continue; } // and
+            if (expression.charAt(i) == '=' && expression.charAt(i + 1) == '=') { continue; } // equals
+            if (expression.charAt(i) == '!' && expression.charAt(i + 1) == '=') { continue; } // does not equal
             trueInfix.append(" ");
         }
         return trueInfix.toString();
     }
 	
-	
-	/** Solves an infix expression given as unprocessed string
-	 * 
-	 * @param infix: infix expression to be solved (unprocessed string)
-	 * @throws Exception
+	/**
+	 * Outputs 
+	 * @param infix: infix expression to be solved (unprocessed string.)
+	 * @throws ArithmeticException Safely stops division by zero solves.
 	 */
-	public static void infixSolver(String infix) throws Exception {
+	public static void solve(String infix) throws Exception {
 								
 		//Step 1: Parse raw string into infix array
 		//FIXME: Add functionality to parse raw string with varying spaces into String[] of values and operators
 		String infixArr[] = infix.split(" ");		//FIXME: Delete this line after better parsing method added
 		
-		//Step 2: Convert Infix Array to Postfix Array
+		//Step 2: Convert Infix Array to postfix Array
 		String postfix = infixToPostfix(infixArr);	//FIXME: I think we want to change infixToPostfix so that it directly gives us the array	
 		String postfixArr[] = postfix.split(" ");	//FIXME: Delete this line after above line is fixed
 		
@@ -53,26 +67,25 @@ public class ProofOfConcept {
 			System.out.println();
 		} catch (ArithmeticException e) { // Step 4a. safely catch any divide by zero errors
 			System.out.println("Cannot divide by zero.\n");
-		} catch (NumberFormatException f) {
-			System.out.println("FIXME: Failed to parse expression.\n" + f); // FIXME: throws when no space is present to delimit a string.
 		}
 	}
 	
 
-	/** Converts an infix expression to postfix.
+	/**
+	 * Converts an infix expression to postfix.
 	 * @param infix: an infix expression
 	 * @return: the postfix expression
 	 * @throws Exception: stack's peek() and pop() methods
 	 */
 	public static String infixToPostfix(String[] infix) throws Exception {
-		Stack<String> S = new Stack<String>();
+		Stack<String> S = new Stack<String>(); 
 		StringBuilder postfix = new StringBuilder();		
 		
 		for (String s : infix) {
 			if (Character.isDigit(s.charAt(0))) { postfix.append(s).append(' '); }
 			else if (s.equals("(")) { S.push(s); }
 			else if (s.equals(")")){
-				while (!S.peek().equals("(")) { postfix.append(S.pop()).append(' '); } // FIXME: throws NullPointerException when a space is missing before an '(' in a string
+				while (!S.peek().equals("(")) { postfix.append(S.pop()).append(' '); }
 				S.pop();
 			}else {	//if s is an operator 
 				while (!S.isEmpty() && !S.peek().equals("(") && precedence(s, S.peek())) {
@@ -81,15 +94,16 @@ public class ProofOfConcept {
 				S.push(s);
 			} 
 		}
-		while (!S.isEmpty()) { postfix.append(S.pop()).append(' '); }	//FIXME: Currently converting LinkedList to string to output?
-		return postfix.substring(0, postfix.length() - 1);				//FIXME: I think more efficient if we directly output string array
+		while (!S.isEmpty()) { postfix.append(S.pop()).append(' '); }
+		return postfix.substring(0, postfix.length() - 1); //FIXME: I think more efficient if we directly output string array
 	}
 	
 	
-	/** Evaluates a postfix expression in which all operands are integers.
+	/**
+	 * Evaluates a postfix expression in which all operands are integers.
 	 * @param postfix: tokens in the postfix expression
 	 * @return: evaluation result
-	 * @throws Exception: stack's pop() method
+	 * @throws Exception: EmptyStackException
 	 */
 	public static int postfixEval(String[] postfix) throws Exception {
 		Stack<Integer> S = new Stack<Integer>();
@@ -103,7 +117,6 @@ public class ProofOfConcept {
 				if (s.equals("/")) { S.push(left / right); }
 	            
 				
-	            //FIXME: test operators added below this point to ensure correct functionality
 				if (s.equals("^")) { S.push((int)Math.pow(left, right)); }
 				if (s.equals("%")) { S.push(left % right); }
 				
@@ -148,10 +161,11 @@ public class ProofOfConcept {
 	}
 	
 	
-	/** Tests whether the precedence of {current} operator is not higher than the operator on top of the stack.
-	 * @param current: operator represented by string
-	 * @param top: operator represented by string
-	 * @return: {true} if {current}'s precedence is lower than or equal to {top}; {false} otherwise
+	/**
+	 * Tests whether the precedence of {current} operator is not higher than the operator on top of the stack.
+	 * @param current - operator represented by string
+	 * @param top - operator represented by string
+	 * @return {true} if {current}'s precedence is lower than or equal to {top}; {false} otherwise
 	 */
 	public static boolean precedence(String current, String top) {
 		//find integer value for precedence of each operator
@@ -163,10 +177,10 @@ public class ProofOfConcept {
 		else { return false; }	
 	}
 	
-	/** Checks precedence level of the operator passed
-	 * 
-	 * @param operator: operator represented by string
-	 * @return: integer value representing precedence level
+	/**
+	 * Checks precedence level of the operator passed
+	 * @param operator - operator represented by string
+	 * @return integer value representing precedence level
 	 */
 	public static int checkPrecedence(String operator) {
 		int precedenceLevel=0;
@@ -183,15 +197,20 @@ public class ProofOfConcept {
 		return precedenceLevel;
 	}
 	
-	
-	//Main Method
+	/**
+	 * 
+	 * @param args -  Never used.
+	 * @throws Exception
+	 */
 	public static void main(String[] args) throws Exception {
-		
-		
 		Scanner scnr = new Scanner(new FileInputStream("input.txt"));
-		
 		while (scnr.hasNext()) {
-			infixSolver(readExpression(scnr.nextLine()));
+			String expression = scnr.nextLine();
+			if (expression.isEmpty()) { // skip empty lines
+				continue;
+			} else {
+				solve(readExpression(expression));
+			}
 		}
 		scnr.close();
 	}
